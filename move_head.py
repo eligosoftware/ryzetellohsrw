@@ -16,6 +16,18 @@ me.stream_on()
 
 net = jetson.inference.detectNet("ssd-mobilenet-v2", threshold=0.5)
 
+def move_head_to_bottle(bottle_center,image_center):
+	global me
+	step=10
+	#print(bottle_center, image_center)
+	threshold=10
+	while (abs(bottle_center-image_center) > threshold):
+		
+		if(bottle_center<image_center):
+			me.rotate_counterclockwise(step)
+		if(bottle_center>image_center):
+			me.rotate_clockwise(step)
+
 def navigate(key):
 
 # 119 w
@@ -56,9 +68,10 @@ while True:
 	#getKeyboardInput()
 
 	frame=me.read_frame()
-	#print(frame)
+	
 	#cv2.imshow(sys.argv[1], cv2.imread(sys.argv[1]))
 	if (frame is not None):
+		image_center=frame.shape[1]/2
 		cuda_image=jetson.utils.cudaFromNumpy(frame)
 		detections = net.Detect(cuda_image)
 
@@ -67,7 +80,8 @@ while True:
 			
 			center=detection.Center
 			if (cl_name=="bottle"):
-				print("Top: {}, Bottom: {}, Left: {}, Right: {}, Height: {}, Width: {}, Area: {}, Center: {}, ".format(detection.Top,detection.Bottom,detection.Left,detection.Right,				detection.Height,detection.Width, detection.Area,detection.Center))
+				#print("Top: {}, Bottom: {}, Left: {}, Right: {}, Height: {}, Width: {}, Area: {}, Center: {}, ".format(detection.Top,detection.Bottom,detection.Left,detection.Right,				detection.Height,detection.Width, detection.Area,detection.Center))
+				move_head_to_bottle(detection.Center[0],image_center)
 				
 			
 			#print(dir(detection))
