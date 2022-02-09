@@ -40,7 +40,7 @@ def trackFace(myDrone,info,w,pid,pError):
 		myDrone.yaw_velocity = 0
 		error=0
 
-	if myDrone.send_rc_control:
+	if myDrone.joystick_control:
 		myDrone.joystick_control(0,0,
 								myDrone.yaw_velocity,0)
 
