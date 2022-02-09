@@ -9,7 +9,7 @@ import jetson.utils
 w,h = 960, 720
 
 #kp ,kd ,ki
-pid=[0.5,0.3,0]
+pid=[0.5,0.5,0]
 pError=0
 
 
