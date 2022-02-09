@@ -8,8 +8,13 @@ myDrone=initializeTello()
 
 while True:
 
-	#Step1
+	# Step1
 	img=telloGetFrame(myDrone,w,h)
+
+	# Step 2
+
+	img=findFace(img)
+
 	cv2.imshow('Image',img)
 
 	if cv2.waitKey(1) & 0xFF==ord('q'):
