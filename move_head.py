@@ -6,7 +6,7 @@ from time import sleep
 import jetson.inference
 import jetson.utils
 
-w,h = 360, 240
+w,h = 960, 720
 
 #kp ,kd ,ki
 pid=[0.5,0.3,0]
