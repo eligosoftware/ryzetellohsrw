@@ -1,13 +1,20 @@
 import sys
 from tello import Tello
 import cv2
+import numpy as np
 from time import sleep
 import jetson.inference
 import jetson.utils
 
-global center, me
+w,h = 360, 240
+
+#kp ,kd ,ki
+pid=[0.5,0.5,0]
+pError=0
+
 
 me =Tello()
+me.yaw_velocity=0
 me.connect()
 print(me.get_battery())
 print(me.get_current_state())
@@ -16,17 +23,29 @@ me.stream_on()
 
 net = jetson.inference.detectNet("ssd-mobilenet-v2", threshold=0.5)
 
-def move_head_to_bottle(bottle_center,image_center):
-	global me
-	step=10
-	#print(bottle_center, image_center)
-	threshold=10
-	while (abs(bottle_center-image_center) > threshold):
-		
-		if(bottle_center<image_center):
-			me.rotate_counterclockwise(step)
-		if(bottle_center>image_center):
-			me.rotate_clockwise(step)
+
+def trackFace(myDrone,info,w,pid,pError):
+
+	# PID Controller
+	error=info[0] -w//2
+
+	speed=pid[0]*error+pid[1]*(error-pError)
+	speed=int(np.clip(speed,-100,100))
+
+	print(speed)
+
+	if info[0]!=0:
+		myDrone.yaw_velocity= speed
+	else:
+		myDrone.yaw_velocity = 0
+		error=0
+
+	if myDrone.send_rc_control:
+		myDrone.joystick_control(0,0,
+								myDrone.yaw_velocity,0)
+
+	return error
+
 
 def navigate(key):
 
@@ -71,8 +90,9 @@ while True:
 	
 	#cv2.imshow(sys.argv[1], cv2.imread(sys.argv[1]))
 	if (frame is not None):
-		image_center=frame.shape[1]/2
-		cuda_image=jetson.utils.cudaFromNumpy(frame)
+		frame = frame.frame
+		img = cv2.resize(frame, (w, h))
+		cuda_image=jetson.utils.cudaFromNumpy(img)
 		detections = net.Detect(cuda_image)
 
 		for detection in detections:
@@ -81,7 +101,7 @@ while True:
 			center=detection.Center
 			if (cl_name=="bottle"):
 				#print("Top: {}, Bottom: {}, Left: {}, Right: {}, Height: {}, Width: {}, Area: {}, Center: {}, ".format(detection.Top,detection.Bottom,detection.Left,detection.Right,				detection.Height,detection.Width, detection.Area,detection.Center))
-				move_head_to_bottle(detection.Center[0],image_center)
+				pError=trackFace(me,detection.Center,w,pid,pError)
 				
 			
 			#print(dir(detection))
