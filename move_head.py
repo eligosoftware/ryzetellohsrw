@@ -97,9 +97,9 @@ while True:
 		frame = frame
 		img = cv2.resize(frame, (w, h))
 		cuda_image=jetson.utils.cudaFromNumpy(img)
-		detections = net.Detect(cuda_image
+		detections = net.Detect(cuda_image)
 
-		bottle_found=False
+		bottle_found = False
 		for detection in detections:
 			cl_name=net.GetClassDesc(detection.ClassID)
 			
