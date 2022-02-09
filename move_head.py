@@ -90,7 +90,7 @@ while True:
 	
 	#cv2.imshow(sys.argv[1], cv2.imread(sys.argv[1]))
 	if (frame is not None):
-		frame = frame.frame
+		frame = frame
 		img = cv2.resize(frame, (w, h))
 		cuda_image=jetson.utils.cudaFromNumpy(img)
 		detections = net.Detect(cuda_image)
