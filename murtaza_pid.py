@@ -13,7 +13,8 @@ while True:
 
 	# Step 2
 
-	img=findFace(img)
+	img, info=findFace(img)
+	print(info[0][0])
 
 	cv2.imshow('Image',img)
 
