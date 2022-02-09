@@ -55,23 +55,23 @@ def trackFace(myDrone,info,w,pid,pError):
 	error=info[0][0] -w//2
 
 	speed=pid[0]*error+pid[1]*(error-pError)
-	speed=np.clip(speed,-100,100)
+	speed=int(np.clip(speed,-100,100))
 
 	print(speed)
 
-	# if info[0][0]!=0:
-	# 	myDrone.yaw_velocity= speed
-	# else:
-	# 	myDrone.for_back_velocity = 0
-	# 	myDrone.left_right_velocity = 0
-	# 	myDrone.up_down_velocity = 0
-	# 	myDrone.yaw_velocity = 0
-	# 	error=0
-	#
-	# if myDrone.send_rc_control:
-	# 	myDrone.send_rc_control(myDrone.left_right_velocity,
-	# 							myDrone.for_back_velocity,
-	# 							myDrone.up_down_velocity,
-	# 							myDrone.yaw_velocity)
+	if info[0][0]!=0:
+		myDrone.yaw_velocity= speed
+	else:
+		myDrone.for_back_velocity = 0
+		myDrone.left_right_velocity = 0
+		myDrone.up_down_velocity = 0
+		myDrone.yaw_velocity = 0
+		error=0
+
+	if myDrone.send_rc_control:
+		myDrone.send_rc_control(myDrone.left_right_velocity,
+								myDrone.for_back_velocity,
+								myDrone.up_down_velocity,
+								myDrone.yaw_velocity)
 
 	return error

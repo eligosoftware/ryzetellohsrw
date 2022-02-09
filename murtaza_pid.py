@@ -8,8 +8,15 @@ w,h = 360, 240
 pid=[0.5,0.5,0]
 pError=0
 myDrone=initializeTello()
-
+startCounter=0 # for no flight put 1, for flight 0
 while True:
+
+	# flight
+
+	if startCounter==0:
+		myDrone.takeoff()
+		startCounter=1
+
 
 	# Step1
 	img=telloGetFrame(myDrone,w,h)
