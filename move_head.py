@@ -104,7 +104,7 @@ while True:
 			cl_name=net.GetClassDesc(detection.ClassID)
 			
 			center=detection.Center
-			if (cl_name=="bottle"):
+			if (cl_name=="person"):
 				bottle_found=True
 				#print("Top: {}, Bottom: {}, Left: {}, Right: {}, Height: {}, Width: {}, Area: {}, Center: {}, ".format(detection.Top,detection.Bottom,detection.Left,detection.Right,				detection.Height,detection.Width, detection.Area,detection.Center))
 				pError=trackFace(me,detection.Center,w,pid,pError)
