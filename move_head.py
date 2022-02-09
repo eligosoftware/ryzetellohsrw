@@ -13,7 +13,7 @@ pid=[0.5,0.5,0]
 pError=0
 
 
-me =Tello()
+me =Tello(log_level='debug')
 me.yaw_velocity=0
 me.connect()
 print(me.get_battery())
