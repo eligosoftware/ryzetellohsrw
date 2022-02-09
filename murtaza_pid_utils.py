@@ -44,6 +44,6 @@ def findFace(img):
 
 	if len(myFaceListArea) !=0:
 		i=myFaceListArea.index(max(myFaceListArea))
-		return img, [myFaceListArea[i],myFaceListArea[i]]
+		return img, [myFaceListC[i],myFaceListArea[i]]
 	else:
 		return img,[[0,0],0]
