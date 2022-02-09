@@ -23,6 +23,11 @@ me.stream_on()
 
 net = jetson.inference.detectNet("ssd-mobilenet-v2", threshold=0.5)
 
+def stop_tracking(myDrone):
+
+	myDrone.yaw_velocity = 0
+
+	myDrone.joystick_control(0,0,myDrone.yaw_velocity,0)
 
 def trackFace(myDrone,info,w,pid,pError):
 
@@ -92,15 +97,19 @@ while True:
 		frame = frame
 		img = cv2.resize(frame, (w, h))
 		cuda_image=jetson.utils.cudaFromNumpy(img)
-		detections = net.Detect(cuda_image)
+		detections = net.Detect(cuda_image
 
+		bottle_found=False
 		for detection in detections:
 			cl_name=net.GetClassDesc(detection.ClassID)
 			
 			center=detection.Center
 			if (cl_name=="bottle"):
+				bottle_found=True
 				#print("Top: {}, Bottom: {}, Left: {}, Right: {}, Height: {}, Width: {}, Area: {}, Center: {}, ".format(detection.Top,detection.Bottom,detection.Left,detection.Right,				detection.Height,detection.Width, detection.Area,detection.Center))
 				pError=trackFace(me,detection.Center,w,pid,pError)
+		if bottle_found == False:
+			stop_tracking(me)
 				
 			
 			#print(dir(detection))
