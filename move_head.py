@@ -9,7 +9,7 @@ import jetson.utils
 w,h = 960, 720
 
 #kp ,kd ,ki
-pid=[0.5,0.5,0]
+pid=[0.2,0.2,0]
 pError=0
 
 
@@ -67,8 +67,8 @@ def navigate(key):
 # 101 e
 
 	global me
-	distance=20
-	angle=10
+	distance=30
+	angle=20
 	if key==104 : me.move_left(distance)
 	elif key==106 : me.move_right(distance)
 
@@ -100,6 +100,8 @@ while True:
 		detections = net.Detect(cuda_image)
 
 		bottle_found = False
+		myFaceListC = []
+		myFaceListArea = []
 		for detection in detections:
 			cl_name=net.GetClassDesc(detection.ClassID)
 			
@@ -107,7 +109,14 @@ while True:
 			if (cl_name=="person"):
 				bottle_found=True
 				#print("Top: {}, Bottom: {}, Left: {}, Right: {}, Height: {}, Width: {}, Area: {}, Center: {}, ".format(detection.Top,detection.Bottom,detection.Left,detection.Right,				detection.Height,detection.Width, detection.Area,detection.Center))
-				pError=trackFace(me,detection.Center,w,pid,pError)
+
+				myFaceListC.append(detection.Center)
+				myFaceListArea.append(detection.Area)
+				#pError=trackFace(me,detection.Center,w,pid,pError)
+		if len(myFaceListArea) != 0:
+			i = myFaceListArea.index(max(myFaceListArea))
+			pError = trackFace(me, myFaceListC[i], w, pid, pError)
+
 		if bottle_found == False:
 			stop_tracking(me)
 				
